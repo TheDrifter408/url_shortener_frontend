@@ -35,7 +35,7 @@ const features = [
 
 export const FeaturesSection = () => {
   return (
-    <section className="py-24 px-4" aria-labelledby="features-heading">
+    <section id="features" className="py-24 px-4" aria-labelledby="features-heading">
       <div className="max-w-6xl mx-auto">
         <header className="text-center mb-16">
           <h2 id="features-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 text-balance">

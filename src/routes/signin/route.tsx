@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState, type FormEvent } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -6,6 +6,9 @@ import { Label } from "@/components/ui/label"
 import { Link2, ArrowRight, Eye, EyeOff, Link } from "lucide-react"
 
 export const Index = () => {
+
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -14,6 +17,9 @@ export const Index = () => {
     e.preventDefault()
     const formdata = new FormData(e.currentTarget);
     console.log(formdata);
+    navigate({
+      to: '/dashboard',
+    });
   }
 
   return (

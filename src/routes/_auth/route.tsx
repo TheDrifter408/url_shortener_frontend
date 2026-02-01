@@ -42,15 +42,13 @@ const AuthenticatedLayout = () => {
 
   return (
     <div id="auth-layout" className="h-screen w-full border overflow-hidden bg-muted/50">
-      <div className="flex h-full w-full overflow-hidden rounded-xl border bg-background shadow-sm">
-        <SidebarProvider className="items-stretch">
-          <AppSidebar links={links} render={renderFn} />
-          <main className="flex-1">
-            <DashboardHeader />
-            <Outlet />
-          </main>
-        </SidebarProvider>
-      </div>
+      <SidebarProvider className="items-stretch">
+        <AppSidebar links={links} render={renderFn} />
+        <main className="flex-1">
+          <DashboardHeader />
+          <Outlet />
+        </main>
+      </SidebarProvider>
     </div>
   )
 }

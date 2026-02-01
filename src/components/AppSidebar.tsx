@@ -10,10 +10,7 @@ interface IAppSidebarProps {
 
 export const AppSidebar = ({ links, render }: IAppSidebarProps) => {
   return (
-    <Sidebar className={cn(
-      "relative! inset-0! h-full rounded-l-md",
-      "data-[state=collapsed]:w-0! data-[state=collapsed]:min-w-0"
-    )}>
+    <Sidebar className={cn("")}>
       <SidebarContent className="">
         {render(links)}
       </SidebarContent>

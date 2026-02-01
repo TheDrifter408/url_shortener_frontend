@@ -4,7 +4,7 @@ const LinkPage = () => {
   const params = Route.useParams();
 
   return (
-    <div className="w-full">
+    <div className="w-full px-2">
       {`Hello from ${params.linkId}`}
     </div>
   )

@@ -15,6 +15,7 @@ import { Route as PublicRouteRouteImport } from './routes/_public/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as PublicIndexRouteImport } from './routes/_public/index'
 import { Route as AuthDashboardRouteImport } from './routes/_auth/dashboard'
+import { Route as AuthProfileRouteRouteImport } from './routes/_auth/profile/route'
 import { Route as AuthLinksLinkIdRouteImport } from './routes/_auth/links.$linkId'
 
 const AboutRoute = AboutRouteImport.update({
@@ -45,6 +46,11 @@ const AuthDashboardRoute = AuthDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const AuthProfileRouteRoute = AuthProfileRouteRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
 const AuthLinksLinkIdRoute = AuthLinksLinkIdRouteImport.update({
   id: '/links/$linkId',
   path: '/links/$linkId',
@@ -55,6 +61,7 @@ export interface FileRoutesByFullPath {
   '/': typeof PublicIndexRoute
   '/signin': typeof SigninRouteRoute
   '/about': typeof AboutRoute
+  '/profile': typeof AuthProfileRouteRoute
   '/dashboard': typeof AuthDashboardRoute
   '/links/$linkId': typeof AuthLinksLinkIdRoute
 }
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/': typeof PublicIndexRoute
   '/signin': typeof SigninRouteRoute
   '/about': typeof AboutRoute
+  '/profile': typeof AuthProfileRouteRoute
   '/dashboard': typeof AuthDashboardRoute
   '/links/$linkId': typeof AuthLinksLinkIdRoute
 }
@@ -71,21 +79,29 @@ export interface FileRoutesById {
   '/_public': typeof PublicRouteRouteWithChildren
   '/signin': typeof SigninRouteRoute
   '/about': typeof AboutRoute
+  '/_auth/profile': typeof AuthProfileRouteRoute
   '/_auth/dashboard': typeof AuthDashboardRoute
   '/_public/': typeof PublicIndexRoute
   '/_auth/links/$linkId': typeof AuthLinksLinkIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/signin' | '/about' | '/dashboard' | '/links/$linkId'
+  fullPaths:
+    | '/'
+    | '/signin'
+    | '/about'
+    | '/profile'
+    | '/dashboard'
+    | '/links/$linkId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/signin' | '/about' | '/dashboard' | '/links/$linkId'
+  to: '/' | '/signin' | '/about' | '/profile' | '/dashboard' | '/links/$linkId'
   id:
     | '__root__'
     | '/_auth'
     | '/_public'
     | '/signin'
     | '/about'
+    | '/_auth/profile'
     | '/_auth/dashboard'
     | '/_public/'
     | '/_auth/links/$linkId'
@@ -142,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthDashboardRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/_auth/profile': {
+      id: '/_auth/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthProfileRouteRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
     '/_auth/links/$linkId': {
       id: '/_auth/links/$linkId'
       path: '/links/$linkId'
@@ -153,11 +176,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthRouteRouteChildren {
+  AuthProfileRouteRoute: typeof AuthProfileRouteRoute
   AuthDashboardRoute: typeof AuthDashboardRoute
   AuthLinksLinkIdRoute: typeof AuthLinksLinkIdRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
+  AuthProfileRouteRoute: AuthProfileRouteRoute,
   AuthDashboardRoute: AuthDashboardRoute,
   AuthLinksLinkIdRoute: AuthLinksLinkIdRoute,
 }

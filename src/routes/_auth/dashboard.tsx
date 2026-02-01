@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 const Dashboard = () => {
   return (
-    <div className="flex h-full p-0.5 border rounded">
+    <div className="flex h-full px-4 border rounded">
       <div id="links-overview">
         Hello World!
       </div>

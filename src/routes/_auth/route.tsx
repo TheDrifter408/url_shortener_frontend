@@ -24,12 +24,12 @@ const AuthenticatedLayout = () => {
           {links.map((linkType, index) => (
             <SidebarMenuItem
               key={`${index}-${linkType.id}`}
-              className="w-full border rounded-md"
+              className="w-full border rounded-md overflow-hidden"
             >
               <Link
                 to="/links/$linkId"
                 params={{ linkId: linkType.id.toString() }}
-                className="border rounded-md"
+                className="w-full px-2 py-1.5 inline-block hover:bg-gray-200"
               >
                 {linkType.title}
               </Link>
@@ -41,8 +41,8 @@ const AuthenticatedLayout = () => {
   }
 
   return (
-    <div id="auth-layout" className="h-screen w-full border overflow-hidden bg-muted/50">
-      <SidebarProvider className="items-stretch">
+    <div id="auth-layout" className="h-screen w-full overflow-hidden p-1 relative bg-muted/50">
+      <SidebarProvider className="h-full items-stretch border overflow-hidden rounded-lg bg-muted/75">
         <AppSidebar links={links} render={renderFn} />
         <main className="flex-1">
           <DashboardHeader />

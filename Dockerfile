@@ -1,6 +1,6 @@
 FROM node:20-alpine
 
-RUN corepack && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
 

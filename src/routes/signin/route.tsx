@@ -1,25 +1,64 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { useState, type FormEvent } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Link2, ArrowRight, Eye, EyeOff, Link } from "lucide-react"
+import { useMutation } from '@/hooks/useMutation'
+import type { APIResponse } from '@/@types/ApiResponse'
+import type { User } from '@/@types/User'
+import type { SignInRequest } from '@/@types/requests/SignInRequest'
+import { useForm } from '@/hooks/useForm'
 
 export const Index = () => {
-
   const navigate = useNavigate();
 
-  const [showPassword, setShowPassword] = useState(false)
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const { mutateFn, pending, error } = useMutation<SignInRequest, APIResponse<User>>({
+    url: 'http://localhost:5000/auth/signin',
+    method: 'POST'
+  });
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const formdata = new FormData(e.currentTarget);
-    console.log(formdata);
-    navigate({
-      to: '/dashboard',
-    });
+  const initialValues = {
+    email: "",
+    password: ""
+  };
+
+  const validate = (values: typeof initialValues) => {
+    const errors: Partial<Record<keyof typeof initialValues, string>> = {};
+
+    if (!values.email) {
+      errors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(values.email)) {
+      errors.email = "Email is invalid";
+    }
+
+    if (!values.password) errors.password = "Password is required";
+    else if (values.password.length < 8) {
+      errors.password = "Password must be atleast 8 characters";
+    }
+
+    return errors;
+  }
+
+  const { values, handleChange, handleBlur, errors, touched, handleSubmit, isValid } = useForm(
+    initialValues,
+    validate,
+  );
+
+  const [showPassword, setShowPassword] = useState(false)
+
+  const login = async (data: typeof initialValues) => {
+    const result = await mutateFn(data);
+    if (result) {
+      navigate({
+        to: '/dashboard',
+      })
+    }
+  }
+
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handleSubmit(login)
   }
 
   return (
@@ -45,48 +84,49 @@ export const Index = () => {
             <p className="text-muted-foreground">Sign in to your account to continue</p>
           </header>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          <form onSubmit={onSubmit} className="flex flex-col gap-5">
             <div className="flex flex-col gap-2">
               <Label htmlFor="email" className="text-sm font-medium text-foreground">
                 Email address
               </Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={values.email}
+                onChange={handleChange}
+                onBlur={handleBlur}
                 className="h-12 bg-secondary border-border text-foreground placeholder:text-muted-foreground rounded-xl"
                 required
               />
+              {errors.email && touched.email && (
+                <p className="text-red-500 mt-1">{errors.email}</p>
+              )}
             </div>
-
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password" className="text-sm font-medium text-foreground">
                   Password
                 </Label>
-                <Link
-                  href="/forgot-password"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Forgot password?
-                </Link>
               </div>
-              <div className="relative">
+              <div
+                className="pr-2 flex items-center bg-secondary border-border focus-within:ring-1 focus-within:ring-ring focus-within:ring-offset-1 focus-within:ring-offset-background rounded-xl">
                 <Input
                   id="password"
+                  name="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="h-12 pr-12 bg-secondary border-border text-foreground placeholder:text-muted-foreground rounded-xl"
+                  value={values.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className="h-12 border-0 bg-transparent ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
@@ -96,13 +136,21 @@ export const Index = () => {
                   )}
                 </button>
               </div>
+              {errors.password && touched.password && (
+                <p className="text-red-500 mt-1">{errors.password}</p>
+              )}
             </div>
-
+            {
+              error && (
+                <p className="text-red-500">{error}</p>
+              )
+            }
             <Button
               type="submit"
               className="h-12 mt-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
+              disabled={pending}
             >
-              Sign in
+              {pending ? 'Signing in....' : 'Sign in'}
               <ArrowRight className="ml-2 w-4 h-4" aria-hidden="true" />
             </Button>
           </form>
@@ -166,5 +214,10 @@ export const Index = () => {
 }
 
 export const Route = createFileRoute('/signin')({
+  beforeLoad: ({ context }) => {
+    if (context.auth.user) {
+      throw redirect({ to: '/dashboard' });
+    }
+  },
   component: Index,
 })

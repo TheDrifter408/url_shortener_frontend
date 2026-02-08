@@ -40,7 +40,7 @@ export const Index = () => {
     return errors;
   }
 
-  const { values, handleChange, handleBlur, errors, touched, handleSubmit, isValid } = useForm(
+  const { values, handleChange, handleBlur, errors, touched, handleSubmit } = useForm(
     initialValues,
     validate,
   );

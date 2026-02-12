@@ -1,24 +1,68 @@
-import { ArrowRight, Check, Copy, Link2 } from 'lucide-react'
+import { ArrowRight, Check, Copy, Link2, LoaderCircle } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
+import { useForm } from '@/hooks/useForm'
+import { useMutation } from '@/hooks/useMutation'
+import type { ShortenUrlRequest } from '@/@types/requests/ShortenUrlRequest'
+import type { APIResponse } from '@/@types/ApiResponse'
+import type { ShortenedUrlResponse } from '@/@types/responses/shortenUrlResponse'
 
 export function HeroSection() {
-  const [url, setUrl] = useState("")
-  const [shortenedUrl, setShortenedUrl] = useState("")
-  const [copied, setCopied] = useState(false)
 
-  const handleShorten = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (url) {
-      setShortenedUrl(`snip.io/${Math.random().toString(36).substring(2, 8)}`)
+  const { mutateFn, pending, error } = useMutation<ShortenUrlRequest, APIResponse<ShortenedUrlResponse>>({
+    url: 'http://localhost:5000/minurl',
+    method: 'POST',
+
+  });
+
+  const [result, setResult] = useState<ShortenedUrlResponse | null>(null);
+
+  const [copied, setCopied] = useState(false);
+
+  const initialValues: ShortenUrlRequest = {
+    payload: ""
+  };
+
+  const validate = (values: ShortenUrlRequest) => {
+    const errors: Partial<Record<keyof typeof initialValues, string>> = {};
+
+    if (!values.payload) {
+      errors.payload = "Please paste a URL to get started";
+    }
+
+    try {
+      new URL(values.payload);
+    } catch (e: unknown) {
+      errors.payload = (e as Error)?.message
+    }
+
+    return errors;
+  }
+
+  const { values, handleChange, handleBlur, errors, handleSubmit } = useForm(
+    initialValues,
+    validate,
+  )
+
+  const shortenUrl = async (values: ShortenUrlRequest) => {
+    const result = await mutateFn(values);
+    if (result) {
+      setResult(result.data);
     }
   }
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(shortenedUrl)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handleSubmit(shortenUrl)
+  }
+
+  const handleCopy = async () => {
+    if (result?.short_url) {
+      await navigator.clipboard.writeText(result?.short_url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000)
+    }
   }
 
   return (
@@ -45,14 +89,16 @@ export function HeroSection() {
           Get detailed analytics and take control of your digital presence.
         </p>
 
-        <form onSubmit={handleShorten} className="flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto mb-8">
+        <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto mb-8">
           <div className="relative flex-1">
             <Link2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" />
             <Input
               type="url"
+              name="payload"
               placeholder="Paste your long URL here..."
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              value={values.payload}
+              onChange={handleChange}
+              onBlur={handleBlur}
               className="h-14 pl-12 pr-4 bg-card border-border text-foreground placeholder:text-muted-foreground rounded-xl text-base"
               aria-label="URL to shorten"
               required
@@ -68,24 +114,30 @@ export function HeroSection() {
           </Button>
         </form>
 
-        {shortenedUrl && (
-          <div className="flex items-center justify-center gap-3 p-4 bg-card border border-border rounded-xl max-w-md mx-auto animate-in fade-in slide-in-from-bottom-4 duration-300">
-            <span className="text-foreground font-medium truncate">{shortenedUrl}</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleCopy}
-              className="shrink-0 hover:bg-secondary"
-              aria-label={copied ? "Copied to clipboard" : "Copy to clipboard"}
-            >
-              {copied ? (
-                <Check className="w-5 h-5 text-green-500" />
-              ) : (
-                <Copy className="w-5 h-5" />
-              )}
-            </Button>
-          </div>
-        )}
+        {pending ?
+          (
+            <LoaderCircle className="transition-transform animate-spin" />
+          ) : error ? (
+            <p className="text-red-500 mt-1">{error}</p>
+          ) :
+            result?.short_url && (
+              <div className="flex items-center justify-center gap-3 p-4 bg-card border border-border rounded-xl max-w-md mx-auto animate-in fade-in slide-in-from-bottom-4 duration-300">
+                <span className="text-foreground font-medium truncate">{result?.short_url}</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleCopy}
+                  className="shrink-0 hover:bg-secondary"
+                  aria-label={"Copy to clipboard"}
+                >
+                  {copied ? (
+                    <Check className="w-5 h-5 text-green-500" />
+                  ) : (
+                    <Copy className="w-5 h-5" />
+                  )}
+                </Button>
+              </div>
+            )}
 
         <p className="mt-6 text-sm text-muted-foreground">
           No registration required. Free forever for basic use.

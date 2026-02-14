@@ -1,7 +1,7 @@
 import type { UseFetchProps } from '@/interfaces/useFetchProps';
 import { useCallback, useEffect, useState } from 'react';
 
-export const useQuery = <T>({ url, params, authenticated = false }:Omit<UseFetchProps, 'body' | 'method' >) => {
+export const useQuery = <T>({ url, params, authenticated = false }: Omit<UseFetchProps, 'body' | 'method'>) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +32,7 @@ export const useQuery = <T>({ url, params, authenticated = false }:Omit<UseFetch
         }
 
         const result = await response.json();
-        setData(result);
+        setData(result.data);
 
       } catch (e: unknown) {
         if (e instanceof Error) {

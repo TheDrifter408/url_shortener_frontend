@@ -13,7 +13,6 @@ export function HeroSection() {
   const { mutateFn, pending, error } = useMutation<ShortenUrlRequest, APIResponse<ShortenedUrlResponse>>({
     url: 'http://localhost:5000/minurl',
     method: 'POST',
-
   });
 
   const [result, setResult] = useState<ShortenedUrlResponse | null>(null);
@@ -40,7 +39,7 @@ export function HeroSection() {
     return errors;
   }
 
-  const { values, handleChange, handleBlur, errors, handleSubmit } = useForm(
+  const { values, handleChange, handleBlur, handleSubmit } = useForm(
     initialValues,
     validate,
   )
@@ -54,14 +53,14 @@ export function HeroSection() {
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    handleSubmit(shortenUrl)
+    handleSubmit(shortenUrl);
   }
 
   const handleCopy = async () => {
     if (result?.short_url) {
       await navigator.clipboard.writeText(result?.short_url);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000)
+      setTimeout(() => setCopied(false), 2000);
     }
   }
 

@@ -3,8 +3,8 @@ import { createRoot } from 'react-dom/client'
 import { routeTree } from "./routeTree.gen.ts";
 import './index.css'
 import { createRouter, RouterProvider } from '@tanstack/react-router';
-import { useAuth } from './hooks/useAuth.ts';
 import { AuthProvider } from './providers/AuthProvider.tsx';
+import { useUrlShortenerStore } from './store/store.ts';
 
 const router = createRouter({
   routeTree,
@@ -20,8 +20,8 @@ declare module '@tanstack/react-router' {
 }
 
 const App = () => {
-  const auth = useAuth();
-  return <RouterProvider router={router} context={{ auth }} />
+  const user = useUrlShortenerStore((state) => state.user);
+  return <RouterProvider router={router} context={{ auth: { user, isLoading: !!user } }} />
 }
 
 createRoot(document.getElementById('root')!).render(

@@ -1,5 +1,5 @@
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
-import { useState, type FormEvent } from "react"
+import { useEffect, useState, type FormEvent } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -9,9 +9,25 @@ import type { APIResponse } from '@/@types/ApiResponse'
 import type { User } from '@/@types/User'
 import type { SignInRequest } from '@/@types/requests/SignInRequest'
 import { useForm } from '@/hooks/useForm'
+import { useUrlShortenerStore } from '@/store/store'
+import { useQuery } from '@/hooks/useQuery'
 
 export const Index = () => {
   const navigate = useNavigate();
+  const setUser = useUrlShortenerStore((state) => state.setUser);
+
+  // call to auto log in the user
+  const { data, loading } = useQuery<User>({
+    url: 'http://localhost:5000/auth/me',
+    authenticated: true
+  });
+
+  useEffect(() => {
+    if (data) {
+      setUser(data);
+      navigate({ to: '/dashboard' });
+    }
+  }, [data]);
 
   const { mutateFn, pending, error } = useMutation<SignInRequest, APIResponse<User>>({
     url: 'http://localhost:5000/auth/signin',
@@ -50,6 +66,7 @@ export const Index = () => {
   const login = async (data: typeof initialValues) => {
     const result = await mutateFn(data);
     if (result) {
+      setUser(result.data);
       navigate({
         to: '/dashboard',
       })

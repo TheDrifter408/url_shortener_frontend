@@ -15,6 +15,7 @@ import { Route as PublicRouteRouteImport } from './routes/_public/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as PublicIndexRouteImport } from './routes/_public/index'
 import { Route as AuthDashboardRouteImport } from './routes/_auth/dashboard'
+import { Route as AuthShorten_urlRouteRouteImport } from './routes/_auth/shorten_url/route'
 import { Route as AuthProfileRouteRouteImport } from './routes/_auth/profile/route'
 import { Route as AuthLinksLinkIdRouteImport } from './routes/_auth/links.$linkId'
 
@@ -46,6 +47,11 @@ const AuthDashboardRoute = AuthDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const AuthShorten_urlRouteRoute = AuthShorten_urlRouteRouteImport.update({
+  id: '/shorten_url',
+  path: '/shorten_url',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
 const AuthProfileRouteRoute = AuthProfileRouteRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -62,6 +68,7 @@ export interface FileRoutesByFullPath {
   '/signin': typeof SigninRouteRoute
   '/about': typeof AboutRoute
   '/profile': typeof AuthProfileRouteRoute
+  '/shorten_url': typeof AuthShorten_urlRouteRoute
   '/dashboard': typeof AuthDashboardRoute
   '/links/$linkId': typeof AuthLinksLinkIdRoute
 }
@@ -70,6 +77,7 @@ export interface FileRoutesByTo {
   '/signin': typeof SigninRouteRoute
   '/about': typeof AboutRoute
   '/profile': typeof AuthProfileRouteRoute
+  '/shorten_url': typeof AuthShorten_urlRouteRoute
   '/dashboard': typeof AuthDashboardRoute
   '/links/$linkId': typeof AuthLinksLinkIdRoute
 }
@@ -80,6 +88,7 @@ export interface FileRoutesById {
   '/signin': typeof SigninRouteRoute
   '/about': typeof AboutRoute
   '/_auth/profile': typeof AuthProfileRouteRoute
+  '/_auth/shorten_url': typeof AuthShorten_urlRouteRoute
   '/_auth/dashboard': typeof AuthDashboardRoute
   '/_public/': typeof PublicIndexRoute
   '/_auth/links/$linkId': typeof AuthLinksLinkIdRoute
@@ -91,10 +100,18 @@ export interface FileRouteTypes {
     | '/signin'
     | '/about'
     | '/profile'
+    | '/shorten_url'
     | '/dashboard'
     | '/links/$linkId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/signin' | '/about' | '/profile' | '/dashboard' | '/links/$linkId'
+  to:
+    | '/'
+    | '/signin'
+    | '/about'
+    | '/profile'
+    | '/shorten_url'
+    | '/dashboard'
+    | '/links/$linkId'
   id:
     | '__root__'
     | '/_auth'
@@ -102,6 +119,7 @@ export interface FileRouteTypes {
     | '/signin'
     | '/about'
     | '/_auth/profile'
+    | '/_auth/shorten_url'
     | '/_auth/dashboard'
     | '/_public/'
     | '/_auth/links/$linkId'
@@ -158,6 +176,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthDashboardRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/_auth/shorten_url': {
+      id: '/_auth/shorten_url'
+      path: '/shorten_url'
+      fullPath: '/shorten_url'
+      preLoaderRoute: typeof AuthShorten_urlRouteRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
     '/_auth/profile': {
       id: '/_auth/profile'
       path: '/profile'
@@ -177,12 +202,14 @@ declare module '@tanstack/react-router' {
 
 interface AuthRouteRouteChildren {
   AuthProfileRouteRoute: typeof AuthProfileRouteRoute
+  AuthShorten_urlRouteRoute: typeof AuthShorten_urlRouteRoute
   AuthDashboardRoute: typeof AuthDashboardRoute
   AuthLinksLinkIdRoute: typeof AuthLinksLinkIdRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthProfileRouteRoute: AuthProfileRouteRoute,
+  AuthShorten_urlRouteRoute: AuthShorten_urlRouteRoute,
   AuthDashboardRoute: AuthDashboardRoute,
   AuthLinksLinkIdRoute: AuthLinksLinkIdRoute,
 }

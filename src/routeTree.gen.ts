@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as SignupRouteRouteImport } from './routes/signup/route'
 import { Route as SigninRouteRouteImport } from './routes/signin/route'
+import { Route as ForgotPasswordRouteRouteImport } from './routes/forgot-password/route'
 import { Route as PublicRouteRouteImport } from './routes/_public/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as PublicIndexRouteImport } from './routes/_public/index'
@@ -24,9 +26,19 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SignupRouteRoute = SignupRouteRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SigninRouteRoute = SigninRouteRouteImport.update({
   id: '/signin',
   path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRouteRoute = ForgotPasswordRouteRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PublicRouteRoute = PublicRouteRouteImport.update({
@@ -65,7 +77,9 @@ const AuthLinksLinkIdRoute = AuthLinksLinkIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof PublicIndexRoute
+  '/forgot-password': typeof ForgotPasswordRouteRoute
   '/signin': typeof SigninRouteRoute
+  '/signup': typeof SignupRouteRoute
   '/about': typeof AboutRoute
   '/profile': typeof AuthProfileRouteRoute
   '/shorten_url': typeof AuthShorten_urlRouteRoute
@@ -74,7 +88,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof PublicIndexRoute
+  '/forgot-password': typeof ForgotPasswordRouteRoute
   '/signin': typeof SigninRouteRoute
+  '/signup': typeof SignupRouteRoute
   '/about': typeof AboutRoute
   '/profile': typeof AuthProfileRouteRoute
   '/shorten_url': typeof AuthShorten_urlRouteRoute
@@ -85,7 +101,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_auth': typeof AuthRouteRouteWithChildren
   '/_public': typeof PublicRouteRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRouteRoute
   '/signin': typeof SigninRouteRoute
+  '/signup': typeof SignupRouteRoute
   '/about': typeof AboutRoute
   '/_auth/profile': typeof AuthProfileRouteRoute
   '/_auth/shorten_url': typeof AuthShorten_urlRouteRoute
@@ -97,7 +115,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/forgot-password'
     | '/signin'
+    | '/signup'
     | '/about'
     | '/profile'
     | '/shorten_url'
@@ -106,7 +126,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/forgot-password'
     | '/signin'
+    | '/signup'
     | '/about'
     | '/profile'
     | '/shorten_url'
@@ -116,7 +138,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_auth'
     | '/_public'
+    | '/forgot-password'
     | '/signin'
+    | '/signup'
     | '/about'
     | '/_auth/profile'
     | '/_auth/shorten_url'
@@ -128,7 +152,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   PublicRouteRoute: typeof PublicRouteRouteWithChildren
+  ForgotPasswordRouteRoute: typeof ForgotPasswordRouteRoute
   SigninRouteRoute: typeof SigninRouteRoute
+  SignupRouteRoute: typeof SignupRouteRoute
   AboutRoute: typeof AboutRoute
 }
 
@@ -141,11 +167,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signin': {
       id: '/signin'
       path: '/signin'
       fullPath: '/signin'
       preLoaderRoute: typeof SigninRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_public': {
@@ -233,7 +273,9 @@ const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   AuthRouteRoute: AuthRouteRouteWithChildren,
   PublicRouteRoute: PublicRouteRouteWithChildren,
+  ForgotPasswordRouteRoute: ForgotPasswordRouteRoute,
   SigninRouteRoute: SigninRouteRoute,
+  SignupRouteRoute: SignupRouteRoute,
   AboutRoute: AboutRoute,
 }
 export const routeTree = rootRouteImport

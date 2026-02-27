@@ -1,5 +1,6 @@
 import type { HttpMethod } from '@/constants/httpMethods';
 import type { UseFetchProps } from '@/interfaces/useFetchProps';
+import { customFetch } from '@/lib/api';
 import { useState } from 'react';
 
 interface UseMutationProps extends Omit<UseFetchProps, 'params' | 'body' | 'authenticated'> {
@@ -23,7 +24,7 @@ export const useMutation = <T, R>({ url, method }: UseMutationProps) => {
         headers['Content-Type'] = 'application/json';
       }
 
-      const response = await fetch(url,{
+      const response = await customFetch(url, {
         method,
         headers,
         body: isFormData ? body : JSON.stringify(body),

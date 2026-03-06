@@ -1,4 +1,5 @@
 import type { UseFetchProps } from '@/interfaces/useFetchProps';
+import { customFetch } from '@/lib/api';
 import { useCallback, useEffect, useState } from 'react';
 
 export const useQuery = <T>({ url, params, authenticated = false }: Omit<UseFetchProps, 'body' | 'method'>) => {
@@ -20,7 +21,7 @@ export const useQuery = <T>({ url, params, authenticated = false }: Omit<UseFetc
         }
 
         //2. Perform the fetch
-        const response = await fetch(fullURL, {
+        const response = await customFetch(fullURL, {
           method: 'GET',
           signal: abortController.signal, // Connect the abort signal
           headers,

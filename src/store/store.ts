@@ -5,7 +5,7 @@ import { create } from 'zustand';
 interface IUrlShortenerStore {
   // User State and functions
   user: User | null;
-  setUser: (user: User) => void;
+  setUser: (user: User | null) => void;
   clearUser: () => void;
   // Links state and functions
   links: LinkType[];
@@ -17,7 +17,7 @@ interface IUrlShortenerStore {
 export const useUrlShortenerStore = create<IUrlShortenerStore>((set, get) => ({
   // User State and functions
   user: null,
-  setUser: (user: User) => {
+  setUser: (user: User | null) => {
     set({ user });
   },
   clearUser: () => {

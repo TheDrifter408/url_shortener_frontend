@@ -34,8 +34,7 @@ export const customFetch = async (url: string, options: CustomRequestInit = {}) 
         _isRetry: true,
       } as CustomRequestInit);
     } else {
-      window.dispatchEvent(new Event('auth-failure'));
-      window.location.href = '/signin'
+      return response;
     }
   }
   return response;

@@ -4,7 +4,7 @@ import { routeTree } from "./routeTree.gen.ts";
 import './index.css'
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { AuthProvider } from './providers/AuthProvider.tsx';
-import { useUrlShortenerStore } from './store/store.ts';
+import { useAuth } from './hooks/useAuth.ts';
 
 const router = createRouter({
   routeTree,
@@ -20,7 +20,16 @@ declare module '@tanstack/react-router' {
 }
 
 const App = () => {
-  const user = useUrlShortenerStore((state) => state.user);
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div>
+        Loading....
+      </div>
+    )
+  }
+
   return <RouterProvider router={router} context={{ auth: { user, isLoading: !!user } }} />
 }
 
